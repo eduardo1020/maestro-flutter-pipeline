@@ -1,0 +1,6 @@
+# Ignores globais para build e dart_tool em qualquer subpasta
+**/build/
+**/.dart_tool/
+.fvm/
+!/.fvm/fvm_config.json
+.env

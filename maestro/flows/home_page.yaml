@@ -1,0 +1,11 @@
+appId: com.example.maestro_poc
+
+---
+
+- launchApp
+
+- assertVisible: "Botão ainda não clicado"
+
+- tapOn: "Clique aqui"
+
+- assertVisible: "Botão clicado com sucesso!"

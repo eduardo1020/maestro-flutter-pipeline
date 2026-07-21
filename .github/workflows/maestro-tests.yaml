@@ -1,15 +1,48 @@
-jobs:
-  maestro-cloud:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.x'
-      - run: flutter pub get
-      - run: flutter build apk --debug
+name: Maestro E2E Tests on Maestro Cloud
 
-      - uses: mobile-dev-inc/action-maestro-cloud@v1
+on:
+  push:
+    branches: [ main, poc-setup ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  maestro-cloud-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout do Código
+        uses: actions/checkout@v4
+
+      - name: ☕ Setup do Java
+        uses: actions/setup-java@v4
         with:
-          api-key: ${{ secrets.MAESTRO_CLOUD_API_KEY }}
-          app-file: build/app/outputs/flutter-apk/app-debug.apk
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: 💙 Setup do Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version-file: '.fvmrc' # Lê a versão do FVM
+          cache: true
+
+      - name: 📦 Instalar Dependências
+        run: flutter pub get
+
+      - name: 🏗️ Compilar APK de Debug
+        run: flutter build apk --debug
+
+      - name: 🛠️ Instalar Maestro CLI
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+
+      - name: 🚀 Executar Testes no Maestro Cloud
+        env:
+          MAESTRO_CLOUD_API_KEY: ${{ secrets.MAESTRO_CLOUD_API_KEY }}
+        run: |
+          maestro cloud \
+            --apiKey "$MAESTRO_CLOUD_API_KEY" \
+            --app build/app/outputs/flutter-apk/app-debug.apk \
+            maestro/
+

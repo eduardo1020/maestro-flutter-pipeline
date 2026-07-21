@@ -4,8 +4,8 @@ appId: com.example.maestro_flutter_poc
 
 - launchApp
 
-- assertVisible: "Botão ainda não clicado"
+- assertVisible: "Aguardando clique"
 
-- tapOn: "Clique aqui"
+- tapOn: "EXECUTAR"
 
-- assertVisible: "Botão clicado com sucesso!"
+- assertVisible: "Automação executada"
